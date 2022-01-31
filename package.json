@@ -1,0 +1,19 @@
+{
+  "name": "com.helvest.easypath",
+  "version": "1.0.0",
+  "displayName": "Easy Path",
+  "description": "Simple class to setup in the inspector a path for any type of file",
+  "keywords": [
+    "Path",
+    "File",
+    "Inspector"
+  ],
+  "author": {
+    "name": "Pedro Dominic\u00e9 (Helvest)",
+    "url": "https://twitter.com/HelvestEpic"
+  },
+  "repository": {
+    "url": "https://github.com/Helvest/Unity-Package-Easy-Path.git",
+    "type": "git"
+  }
+}
