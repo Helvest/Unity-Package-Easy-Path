@@ -29,7 +29,11 @@ namespace EasyPath
 
 		public PathSystem pathSystem = default;
 
+		public string prefixPath = default;
+
 		public string path = default;
+
+		public string suffixPath = default;
 
 		public string linuxOverrideDirectPath = default;
 
@@ -58,31 +62,29 @@ namespace EasyPath
 		{
 			return pathSystem switch
 			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, path, fileName + extension),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path, fileName + extension),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path, fileName + extension),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path, fileName + extension),
-				PathSystem.Resources => Path.Combine(path, fileName),
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path, fileName + extension),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path, fileName + extension),
-				_ => Path.Combine(GetDirectPath(), fileName + extension)
+				PathSystem.GameData => Path.Combine(Application.dataPath, prefixPath, path, suffixPath, fileName + extension),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, prefixPath, path, suffixPath, fileName + extension),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, prefixPath, path, suffixPath, fileName + extension),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, prefixPath, path, suffixPath, fileName + extension),
+				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath, fileName),
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, prefixPath, path, suffixPath, fileName + extension),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, prefixPath, path, suffixPath, fileName + extension),
+				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath, fileName + extension)
 			};
 		}
 
 		public string GetDirectoryPath()
 		{
-
-
 			return pathSystem switch
 			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, path),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path),
-				PathSystem.Resources => path,
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path),
-				_ => GetDirectPath(),
+				PathSystem.GameData => Path.Combine(Application.dataPath, prefixPath, path, suffixPath),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, prefixPath, path, suffixPath),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, prefixPath, path, suffixPath),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, prefixPath, path, suffixPath),
+				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath),
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, prefixPath, path, suffixPath),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, prefixPath, path, suffixPath),
+				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath)
 			};
 		}
 

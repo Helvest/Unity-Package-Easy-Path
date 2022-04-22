@@ -1,6 +1,6 @@
 {
   "name": "com.helvest.easypath",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Easy Path",
   "description": "Simple class to setup in the inspector a path for any type of file",
   "keywords": [
