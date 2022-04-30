@@ -25,7 +25,7 @@ namespace EasyPath
 	public class PathData
 	{
 
-		#region Variables
+		#region Fields
 
 		public PathSystem pathSystem = default;
 
