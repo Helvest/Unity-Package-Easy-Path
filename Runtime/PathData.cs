@@ -10,8 +10,8 @@ namespace EasyPath
 	public enum PathSystem
 	{
 		DirectPath,
-		GameData,
 		StreamingAssets,
+		GameData,
 		PersistentData,
 		TemporaryCache,
 		Resources,
@@ -21,6 +21,8 @@ namespace EasyPath
 
 	#endregion
 
+	#region PathData
+
 	[Serializable]
 	public class PathData
 	{
@@ -29,15 +31,7 @@ namespace EasyPath
 
 		public PathSystem pathSystem = default;
 
-		public string prefixPath = default;
-
 		public string path = default;
-
-		public string suffixPath = default;
-
-		public string linuxOverrideDirectPath = default;
-
-		public string OSXOverrideDirectPath = default;
 
 		public string fileName = default;
 
@@ -45,31 +39,70 @@ namespace EasyPath
 
 		#endregion
 
+		#region Init
+
+		public PathData() { }
+
+		public PathData(string fullPath)
+		{
+			SetFromFullPath(fullPath);
+		}
+
+		public PathData(PathData pathData)
+		{
+			Copy(pathData);
+		}
+
+		#endregion
+
+		#region PathToPathSystem
+
+		private static readonly PathSystem[] _pathSystemCheckArray = new PathSystem[]
+		{
+			PathSystem.StreamingAssets,
+			PathSystem.GameData,
+			PathSystem.PersistentData,
+			PathSystem.TemporaryCache,
+			PathSystem.ConsoleLog,
+			PathSystem.AbsoluteURL
+		};
+
+		public static PathSystem PathToPathSystem(string path)
+		{
+			foreach (var system in _pathSystemCheckArray)
+			{
+				var systemPath = GetSytemPath(system);
+
+				if (systemPath.Length != 0 && path.Contains(systemPath))
+				{
+					return system;
+				}
+			}
+
+			return PathSystem.DirectPath;
+		}
+
+		#endregion
+
 		#region Get
 
-		private string GetDirectPath()
+		protected virtual string GetDirectPath()
 		{
-#if UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
-		return string.IsNullOrEmpty(linuxOverrideDirectPath) ? path : linuxOverrideDirectPath;
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-		return string.IsNullOrEmpty(OSXOverrideDirectPath) ? path : OSXOverrideDirectPath;
-#else
 			return path;
-#endif
 		}
 
 		public string GetFullPath()
 		{
 			return pathSystem switch
 			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath, fileName),
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, prefixPath, path, suffixPath, fileName + extension),
-				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath, fileName + extension)
+				PathSystem.GameData => Path.Combine(Application.dataPath, path, fileName + extension),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path, fileName + extension),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path, fileName + extension),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path, fileName + extension),
+				PathSystem.Resources => Path.Combine(path, fileName),
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path, fileName + extension),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path, fileName + extension),
+				_ => Path.Combine(GetDirectPath(), fileName + extension)
 			};
 		}
 
@@ -77,14 +110,14 @@ namespace EasyPath
 		{
 			return pathSystem switch
 			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, prefixPath, path, suffixPath),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, prefixPath, path, suffixPath),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, prefixPath, path, suffixPath),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, prefixPath, path, suffixPath),
-				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, prefixPath, path, suffixPath),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, prefixPath, path, suffixPath),
-				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath)
+				PathSystem.GameData => Path.Combine(Application.dataPath, path),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path),
+				PathSystem.Resources => path,
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path),
+				_ => GetDirectPath()
 			};
 		}
 
@@ -92,35 +125,25 @@ namespace EasyPath
 		{
 			return pathSystem switch
 			{
-				PathSystem.GameData => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.StreamingAssets => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.PersistentData => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.TemporaryCache => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath, fileName),
-				PathSystem.ConsoleLog => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				PathSystem.AbsoluteURL => Path.Combine(prefixPath, path, suffixPath, fileName + extension),
-				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath, fileName + extension)
-			};
-		}
-
-		public string GetPartialDirectoryPath()
-		{
-			return pathSystem switch
-			{
-				PathSystem.GameData => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.StreamingAssets => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.PersistentData => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.TemporaryCache => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.Resources => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.ConsoleLog => Path.Combine(prefixPath, path, suffixPath),
-				PathSystem.AbsoluteURL => Path.Combine(prefixPath, path, suffixPath),
-				_ => Path.Combine(prefixPath, GetDirectPath(), suffixPath)
+				PathSystem.GameData => Path.Combine(path, fileName + extension),
+				PathSystem.StreamingAssets => Path.Combine(path, fileName + extension),
+				PathSystem.PersistentData => Path.Combine(path, fileName + extension),
+				PathSystem.TemporaryCache => Path.Combine(path, fileName + extension),
+				PathSystem.Resources => Path.Combine(path, fileName),
+				PathSystem.ConsoleLog => Path.Combine(path, fileName + extension),
+				PathSystem.AbsoluteURL => Path.Combine(path, fileName + extension),
+				_ => Path.Combine(GetDirectPath(), fileName + extension)
 			};
 		}
 
 		public string GetSytemPath()
 		{
-			return pathSystem switch
+			return GetSytemPath(pathSystem);
+		}
+
+		public static string GetSytemPath(PathSystem system)
+		{
+			return system switch
 			{
 				PathSystem.GameData => Application.dataPath,
 				PathSystem.StreamingAssets => Application.streamingAssetsPath,
@@ -152,11 +175,30 @@ namespace EasyPath
 
 		#region Set
 
+		public void SetFromFullPath(params string[] fullPath)
+		{
+			SetFromFullPath(Path.Combine(fullPath));
+		}
+
+		public void SetFromFullPath(string fullPath)
+		{
+			pathSystem = PathToPathSystem(fullPath);
+
+			Debug.LogError("pathSystem: " + pathSystem);
+
+			if (pathSystem != PathSystem.DirectPath)
+			{
+				var systemPath = GetSytemPath(pathSystem).Length;
+				fullPath = fullPath.Remove(0, systemPath + 1);
+			}
+
+			SetFromPartialPath(fullPath);
+		}
+
 		public void SetFromPartialPath(string partialPath)
 		{
 			path = Path.GetDirectoryName(partialPath);
-
-			fileName = Path.GetFileName(partialPath);
+			fileName = Path.GetFileNameWithoutExtension(partialPath);
 
 			if (Path.HasExtension(partialPath))
 			{
@@ -166,5 +208,44 @@ namespace EasyPath
 
 		#endregion
 
+		#region Copy
+
+		public virtual void Copy(PathData pathData)
+		{
+			pathSystem = pathData.pathSystem;
+			path = pathData.path;
+			fileName = pathData.fileName;
+			extension = pathData.extension;
+		}
+
+		#endregion
+
 	}
+
+	#endregion
+
+	#region PathDataSystemOverride
+
+	[Serializable]
+	public class PathDataSystemOverride : PathData
+	{
+
+		public string linuxOverrideDirectPath = default;
+
+		public string OSXOverrideDirectPath = default;
+
+		protected override string GetDirectPath()
+		{
+#if DEVELOPMENT_BUILD_LINUX || UNITY_STANDALONE_LINUX
+			return string.IsNullOrEmpty(linuxOverrideDirectPath) ? path : linuxOverrideDirectPath;
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+			return string.IsNullOrEmpty(OSXOverrideDirectPath) ? path : OSXOverrideDirectPath;
+#else
+			return path;
+#endif
+		}
+	}
+
+	#endregion
+
 }
