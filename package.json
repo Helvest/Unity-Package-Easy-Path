@@ -1,6 +1,6 @@
 {
   "name": "com.helvest.easypath",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "displayName": "Easy Path",
   "description": "Easy Path is a simple and efficient Unity package that helps you manage and work with file and directory paths in your Unity projects. This package provides an easy-to-use API to handle various path scenarios and supports different platforms seamlessly.\r\n\nFeatures\r\n\r\n    Easy to use API for handling file and directory paths\r\n    Supports multiple path systems (DirectPath, StreamingAssets, GameData, PersistentData, TemporaryCache, Resources, ConsoleLog, AbsoluteURL)\r\n    Platform-specific path overrides for Linux and macOS\r\n    Serializable PathData class for storing and manipulating path information\r\n    Convenience methods for getting full, partial, and system paths\r\n    Automatically detects path systems based on given paths",
   "keywords": [

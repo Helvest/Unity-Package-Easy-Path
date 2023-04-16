@@ -86,57 +86,7 @@ namespace EasyPath
 
 		#region Get
 
-		protected virtual string GetDirectPath()
-		{
-			return path;
-		}
-
-		public string GetFullPath()
-		{
-			return pathSystem switch
-			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, path, fileName + extension),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path, fileName + extension),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path, fileName + extension),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path, fileName + extension),
-				PathSystem.Resources => Path.Combine(path, fileName),
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path, fileName + extension),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path, fileName + extension),
-				_ => Path.Combine(GetDirectPath(), fileName + extension)
-			};
-		}
-
-		public string GetDirectoryPath()
-		{
-			return pathSystem switch
-			{
-				PathSystem.GameData => Path.Combine(Application.dataPath, path),
-				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, path),
-				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, path),
-				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, path),
-				PathSystem.Resources => path,
-				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, path),
-				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, path),
-				_ => GetDirectPath()
-			};
-		}
-
-		public string GetPartialPath()
-		{
-			return pathSystem switch
-			{
-				PathSystem.GameData => Path.Combine(path, fileName + extension),
-				PathSystem.StreamingAssets => Path.Combine(path, fileName + extension),
-				PathSystem.PersistentData => Path.Combine(path, fileName + extension),
-				PathSystem.TemporaryCache => Path.Combine(path, fileName + extension),
-				PathSystem.Resources => Path.Combine(path, fileName),
-				PathSystem.ConsoleLog => Path.Combine(path, fileName + extension),
-				PathSystem.AbsoluteURL => Path.Combine(path, fileName + extension),
-				_ => Path.Combine(GetDirectPath(), fileName + extension)
-			};
-		}
-
-		public string GetSytemPath()
+		public virtual string GetSytemPath()
 		{
 			return GetSytemPath(pathSystem);
 		}
@@ -156,35 +106,83 @@ namespace EasyPath
 			};
 		}
 
-		public string GetFileName()
+		protected virtual string GetPath()
 		{
-			return fileName + extension;
+			return path;
 		}
 
-		public string GetFileNameWithoutExtension()
+		public virtual string GetFileName()
+		{
+			return GetFileNameWithoutExtension() + GetExtension();
+		}
+
+		public virtual string GetFileNameWithoutExtension()
 		{
 			return fileName;
 		}
 
-		public string GetExtension()
+		public virtual string GetExtension()
 		{
 			return extension;
+		}
+
+		public virtual string GetFullPath()
+		{
+			return pathSystem switch
+			{
+				PathSystem.GameData => Path.Combine(Application.dataPath, GetPath(), GetFileName()),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, GetPath(), GetFileName()),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, GetPath(), GetFileName()),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, GetPath(), GetFileName()),
+				PathSystem.Resources => Path.Combine(GetPath(), GetFileNameWithoutExtension()),
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, GetPath(), GetFileName()),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, GetPath(), GetFileName()),
+				_ => Path.Combine(GetPath(), GetFileName())
+			};
+		}
+
+		public virtual string GetDirectoryPath()
+		{
+			return pathSystem switch
+			{
+				PathSystem.GameData => Path.Combine(Application.dataPath, GetPath()),
+				PathSystem.StreamingAssets => Path.Combine(Application.streamingAssetsPath, GetPath()),
+				PathSystem.PersistentData => Path.Combine(Application.persistentDataPath, GetPath()),
+				PathSystem.TemporaryCache => Path.Combine(Application.temporaryCachePath, GetPath()),
+				PathSystem.Resources => GetPath(),
+				PathSystem.ConsoleLog => Path.Combine(Application.consoleLogPath, GetPath()),
+				PathSystem.AbsoluteURL => Path.Combine(Application.absoluteURL, GetPath()),
+				_ => GetPath()
+			};
+		}
+
+		public virtual string GetPartialPath()
+		{
+			return pathSystem switch
+			{
+				PathSystem.GameData => Path.Combine(GetPath(), GetFileName()),
+				PathSystem.StreamingAssets => Path.Combine(GetPath(), GetFileName()),
+				PathSystem.PersistentData => Path.Combine(GetPath(), GetFileName()),
+				PathSystem.TemporaryCache => Path.Combine(GetPath(), GetFileName()),
+				PathSystem.Resources => Path.Combine(GetPath(), GetFileNameWithoutExtension()),
+				PathSystem.ConsoleLog => Path.Combine(GetPath(), GetFileName()),
+				PathSystem.AbsoluteURL => Path.Combine(GetPath(), GetFileName()),
+				_ => Path.Combine(GetPath(), GetFileName())
+			};
 		}
 
 		#endregion
 
 		#region Set
 
-		public void SetFromFullPath(params string[] fullPath)
+		public virtual void SetFromFullPath(params string[] fullPath)
 		{
 			SetFromFullPath(Path.Combine(fullPath));
 		}
 
-		public void SetFromFullPath(string fullPath)
+		public virtual void SetFromFullPath(string fullPath)
 		{
 			pathSystem = PathToPathSystem(fullPath);
-
-			Debug.LogError("pathSystem: " + pathSystem);
 
 			if (pathSystem != PathSystem.DirectPath)
 			{
@@ -195,7 +193,7 @@ namespace EasyPath
 			SetFromPartialPath(fullPath);
 		}
 
-		public void SetFromPartialPath(string partialPath)
+		public virtual void SetFromPartialPath(string partialPath)
 		{
 			path = Path.GetDirectoryName(partialPath);
 			fileName = Path.GetFileNameWithoutExtension(partialPath);
@@ -234,7 +232,7 @@ namespace EasyPath
 
 		public string OSXOverrideDirectPath = default;
 
-		protected override string GetDirectPath()
+		protected override string GetPath()
 		{
 #if DEVELOPMENT_BUILD_LINUX || UNITY_STANDALONE_LINUX
 			return string.IsNullOrEmpty(linuxOverrideDirectPath) ? path : linuxOverrideDirectPath;
