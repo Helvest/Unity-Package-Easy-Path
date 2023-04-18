@@ -5,7 +5,8 @@
 ## Features
 
 - Easy to use API for handling file and directory paths
-- Supports multiple path systems (DirectPath, StreamingAssets, GameData, PersistentData, TemporaryCache, Resources, ConsoleLog, AbsoluteURL)
+- Supports multiple path systems (GameData, StreamingAssets, PersistentData, TemporaryCache, Resources, ConsoleLog, AbsoluteURL)
+- Ability to use a custom file system
 - Platform-specific path overrides for Linux and macOS
 - Serializable PathData class for storing and manipulating path information
 - Convenience methods for getting full, partial, and system paths
@@ -36,7 +37,7 @@ You can create a new PathData instance in various ways:
 PathData pathData = new PathData();
 
 // Create a PathData instance from a full path
-PathData fullPathData = new PathData("C:/Users/user/Documents/myfile.txt");
+PathData pathDataFromFullPath = new PathData("your/full/path/here.txt");
 
 // Create a PathData instance by copying another instance
 PathData copiedPathData = new PathData(existingPathData);
@@ -46,6 +47,12 @@ PathData copiedPathData = new PathData(existingPathData);
 You can easily manipulate and retrieve information about paths using the provided methods:
 
 ```csharp
+
+// Set what you need
+pathData.PathSystem = PathSystem.StreamingAssets;
+pathData.SubPath = "ExampleFolder";
+pathData.FileName = "exampleFile";
+pathData.Extension = ".txt";
 
 // Set a path from a full path
 pathData.SetFromFullPath("C:/Users/user/Documents/myfile.txt");
@@ -65,14 +72,14 @@ string partialPath = pathData.GetPartialPath();
 // Get the system path
 string systemPath = pathData.GetSytemPath();
 
-// Get the file name with extension
-string fileName = pathData.GetFileName();
-
 // Get the file name without extension
-string fileNameWithoutExtension = pathData.GetFileNameWithoutExtension();
+string fileName = pathData.FileName;
+
+// Get the file name with extension
+string fileNameWithoutExtension = pathData.FileNameWithExtension;
 
 // Get the file extension
-string fileExtension = pathData.GetExtension();
+string fileExtension = pathData.Extension;
 ```
 
 ## PathDataSystemOverride
@@ -89,20 +96,6 @@ pathDataSystemOverride.linuxOverrideDirectPath = "/home/user/Documents/myfile.tx
 // Set the macOS override direct path
 pathDataSystemOverride.OSXOverrideDirectPath = "/Users/user/Documents/myfile.txt";
 
-// Working with PathDataSystemOverride
-
-PathDataSystemOverride pathDataSystemOverride = new PathDataSystemOverride();
-
-// Set the Linux override direct path
-pathDataSystemOverride.linuxOverrideDirectPath = "/home/user/Documents/myfile.txt";
-
-// Set the macOS override direct path
-pathDataSystemOverride.OSXOverrideDirectPath = "/Users/user/Documents/myfile.txt";
-
 // Get the direct path considering platform-specific overrides
 string directPath = pathDataSystemOverride.GetDirectPath();
 ```
-
-## License
-
-This project is licensed under
