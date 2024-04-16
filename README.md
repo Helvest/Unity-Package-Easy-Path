@@ -7,7 +7,7 @@
 - Easy to use API for handling file and directory paths
 - Supports multiple path systems (GameData, StreamingAssets, PersistentData, TemporaryCache, Resources, ConsoleLog, AbsoluteURL)
 - Ability to use a custom file system
-- Platform-specific path overrides for Linux and macOS
+- Platform-specific and editor path overrides
 - Serializable PathData class for storing and manipulating path information
 - Convenience methods for getting full, partial, and system paths
 - Automatically detects path systems based on given paths
@@ -80,22 +80,4 @@ string fileNameWithoutExtension = pathData.FileNameWithExtension;
 
 // Get the file extension
 string fileExtension = pathData.Extension;
-```
-
-## PathDataSystemOverride
-
-The PathDataSystemOverride class extends PathData and provides platform-specific path overrides for Linux and macOS:
-
-```csharp
-
-PathDataSystemOverride pathDataSystemOverride = new PathDataSystemOverride();
-
-// Set the Linux override direct path
-pathDataSystemOverride.linuxOverrideDirectPath = "/home/user/Documents/myfile.txt";
-
-// Set the macOS override direct path
-pathDataSystemOverride.OSXOverrideDirectPath = "/Users/user/Documents/myfile.txt";
-
-// Get the direct path considering platform-specific overrides
-string directPath = pathDataSystemOverride.GetDirectPath();
 ```

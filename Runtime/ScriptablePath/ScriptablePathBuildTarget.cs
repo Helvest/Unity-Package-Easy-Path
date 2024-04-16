@@ -5,7 +5,7 @@ using UnityEngine;
 namespace EasyPath
 {
 	[CreateAssetMenu(menuName = "EasyPath/Scriptable Path Build Target")]
-	public class ScriptablePathBuildTarget : ScriptablePath
+	public class ScriptablePathBuildTarget : ScriptablePathAbstract
 	{
 		[Serializable]
 		public class PathDataWithBuildTarget : PathDataWithParent
@@ -17,15 +17,6 @@ namespace EasyPath
 		{
 			new PathDataWithBuildTarget()
 		};
-
-		public override PathSystem PathSystem => GetPathData().PathSystem;
-
-		public override string FileName => GetPathData().FileName;
-
-		public override string GetFullPath()
-		{
-			return GetPathData().GetFullPath();
-		}
 
 		public override PathData GetPathData()
 		{
@@ -40,4 +31,6 @@ namespace EasyPath
 			return null;
 		}
 	}
+
+	
 }

@@ -7,7 +7,7 @@ namespace EasyPath
 	public class PathDataWithParent : PathData
 	{
 		[Space]
-		public ScriptablePathBuildTarget parent;
+		public ScriptablePathAbstract parent;
 
 		public PathData ParentPath => parent?.GetPathData();
 

@@ -2,14 +2,12 @@
 
 namespace EasyPath
 {
-	public abstract class ScriptablePath : ScriptableObject, IPath
+	[CreateAssetMenu(menuName = "EasyPath/Scriptable Path")]
+	public class ScriptablePath : ScriptablePathAbstract
 	{
-		public abstract PathSystem PathSystem { get; }
+		public PathData pathData = new PathData();
 
-		public abstract string FileName { get; }
+		public override PathData GetPathData() => pathData;
 
-		public abstract string GetFullPath();
-
-		public abstract PathData GetPathData();
 	}
 }
