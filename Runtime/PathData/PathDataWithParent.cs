@@ -3,35 +3,79 @@ using UnityEngine;
 
 namespace EasyPath
 {
-	[Serializable]
-	public class PathDataWithParent : PathData
+[Serializable]
+public class PathDataWithParent : FilePathData
+{
+	[Space] [Tooltip("Optional parent ScriptableDirectoryPath to inherit values from if they are not defined here.")]
+	public ScriptableFilePathAbstract parent;
+
+	public FilePathData ParentPath => parent?.GetPathData();
+
+	public bool HasParent => parent != null;
+
+	public override PathSystem PathSystem
 	{
-		[Space]
-		public ScriptablePathAbstract parent;
+		get
+		{
+			if (HasParent && base.PathSystem == PathSystem.None)
+			{
+				return ParentPath.PathSystem;
+			}
 
-		public PathData ParentPath => parent?.GetPathData();
-
-		public bool HasParent => parent != null;
-
-		public override PathSystem PathSystem =>
-			base.PathSystem == PathSystem.None && HasParent
-			? ParentPath.PathSystem : base.PathSystem;
-
-		public override string CustomPathSystem =>
-			string.IsNullOrWhiteSpace(base.CustomPathSystem) && HasParent
-			? ParentPath.CustomPathSystem : base.CustomPathSystem;
-
-		public override string SubPath =>
-			string.IsNullOrWhiteSpace(base.SubPath) && HasParent
-			? ParentPath.SubPath : base.SubPath;
-
-		public override string FileName =>
-			string.IsNullOrWhiteSpace(base.FileName) && HasParent
-			? ParentPath.FileName : base.FileName;
-
-		public override string Extension =>
-			string.IsNullOrWhiteSpace(base.Extension) && HasParent
-			? ParentPath.Extension : base.Extension;
-
+			return base.PathSystem;
+		}
 	}
+
+	public override string CustomPathSystem
+	{
+		get
+		{
+			if (HasParent && string.IsNullOrWhiteSpace(base.CustomPathSystem))
+			{
+				return ParentPath.CustomPathSystem;
+			}
+
+			return base.CustomPathSystem;
+		}
+	}
+
+	public override string SubPath
+	{
+		get
+		{
+			if (HasParent && string.IsNullOrWhiteSpace(base.SubPath))
+			{
+				return ParentPath.SubPath;
+			}
+
+			return base.SubPath;
+		}
+	}
+
+	public override string FileName
+	{
+		get
+		{
+			if (HasParent && string.IsNullOrWhiteSpace(base.FileName))
+			{
+				return ParentPath.FileName;
+			}
+
+			return base.FileName;
+		}
+	}
+
+	public override string Extension
+	{
+		get
+		{
+			if (HasParent && string.IsNullOrWhiteSpace(base.Extension))
+			{
+				return ParentPath.Extension;
+			}
+
+			return base.Extension;
+		}
+	}
+}
 }

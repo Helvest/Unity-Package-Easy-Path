@@ -1,10 +1,14 @@
 {
-  "name": "Helvest.EasyPath",
-  "rootNamespace": "EasyPath",
-  "references": [],
-  "includePlatforms": [],
+  "name": "Helvest.EasyPath.Editor",
+  "rootNamespace": "EasyPath.Editor",
+  "references": [
+    "Helvest.EasyPath"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
   "excludePlatforms": [],
-  "allowUnsafeCode": true,
+  "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
   "autoReferenced": true,
